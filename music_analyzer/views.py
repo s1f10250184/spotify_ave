@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
+import os
 
 
 # Create your views here.
@@ -19,8 +20,8 @@ def spotify_callback(request):
     return HttpResponse(f"Logged in! User: {profile['display_name']}")
 
 sp_oauth = SpotifyOAuth(
-    client_id="",
-    client_secret="",
+    client_id=os.environ.get('SPOTIFY_CLIENT_ID'),
+    client_secret=os.environ.get('SPOTIFY_CLIENT_SECRET'),
     redirect_uri="http://127.0.0.1:8000/callback/",
     scope="user-top-read user-read-recently-played"
 )
