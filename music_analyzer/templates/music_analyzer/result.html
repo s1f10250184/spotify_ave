@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <title>結果ページ</title>
+    </head>
+    <body>
+
+    <h1>{{ limit }} 曲の結果</h1>
+
+    <ul>
+    {% for t in tracks %}
+        <li>{{ t.name }} - {{ t.artists.0.name }}</li>
+    {% endfor %}
+    </ul>
+
+    </body>
+</html>

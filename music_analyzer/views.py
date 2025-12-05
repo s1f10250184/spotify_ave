@@ -9,15 +9,28 @@ import os
 def index(request):
     return render(request, 'music_analyzer/index.html')
 
+def spotify_login_page(request):
+    limit = request.GET.get("limit", 20) 
+    request.session["limit"] = limit       
+    return render(request, "music_analyzer/index.html", {"limit": limit})
+
+
 def spotify_callback(request):
     code = request.GET.get("code")
     token_info = sp_oauth.get_access_token(code)
     access_token = token_info["access_token"]
-
     sp = spotipy.Spotify(auth=access_token)
+
+    limit = int(request.session.get("limit", 20))
+    top_tracks = sp.current_user_top_tracks(limit=limit)
+    items = top_tracks["items"]
     profile = sp.current_user()
 
-    return HttpResponse(f"Logged in! User: {profile['display_name']}")
+    return render(request, "music_analyzer/result.html", {
+        "tracks": items,
+        "limit": limit
+    })
+
 
 sp_oauth = SpotifyOAuth(
     client_id=os.environ.get('SPOTIFY_CLIENT_ID'),
