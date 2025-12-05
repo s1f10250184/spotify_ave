@@ -1,0 +1,21 @@
+grid {
+    display: grid;
+}
+
+.container {
+    width: 90px;
+    max-width:800px;
+    margin: 0 auto;
+}
+
+/* 画面幅が 600px 以下（スマホ）のときだけ適用 */
+@media (max-width: 600px) {
+    .title {
+        font-size: 20px;  /* スマホでは文字を少し小さく */
+    }
+
+    .button {
+        padding: 12px 20px;
+        width: 100%;      /* スマホでは横いっぱいに広げる */
+    }
+}
