@@ -8,12 +8,12 @@
     </head>
     <body>
         <div class="music_nums">
-            <from action ="{% url 'spotify_login' %}" method="get">
+            <form action ="{% url 'spotify_login' %}" method="get">
                        <label for="music_num">曲数を選択</label>
-                        <input type="number" id="music_num" name="music_num" min="1" max="50" value="10">
+                        <input type="number" id="music_num" name="music_num" min="1" max="50" value="20">
 
                         <button type="submit">Spotifyでログイン</button>
-            </from>
+            </form>
         </div>
     </body>
 </html>
