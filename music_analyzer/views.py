@@ -40,6 +40,13 @@ sp_oauth = SpotifyOAuth(
 )
 
 def spotify_login(request):
+    limit = request.GET.get("music_num")
+    if not limit:
+        limit = 20
+    else:
+        limit = int(limit)
+
+    request.session["limit"] = limit
     auth_url = sp_oauth.get_authorize_url()
     return redirect(auth_url)
 
