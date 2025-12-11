@@ -10,7 +10,9 @@
 
     <ul>
     {% for t in tracks %}
-        <li>{{ t.name }} - {{ t.artists.0.name }}</li>
+        <div>
+            <h3>{{ t.name }} {{ t.album.aitists.0.name }}</h3>   
+        </div>
     {% endfor %}
     </ul>
 
