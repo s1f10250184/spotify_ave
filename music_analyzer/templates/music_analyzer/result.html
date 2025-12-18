@@ -1,17 +1,24 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ja">
     <head>
         <meta charset="UTF-8" name="viewport" content="'width=device-width, initial-scale=1.0">
         <title>結果ページ</title>
+        <link rel="stylesheet" href = "{% static 'music_analyzer/style.css' %}"></link>
     </head>
     <body>
 
-    <h1>最近聞いた曲{{ limit }} 曲</h1>
+    <h1>過去{{ term_label }}のtop{{ limit }}曲</h1>
 
     <ul>
     {% for t in tracks %}
         <div>
-            <h3>{{ t.name }} {{ t.album.aitists.0.name }}</h3>   
+            <h3>
+                 <a href="{{ t.external_urls.spotify }}" target="_self" rel="noopener noreferrer">
+                    {{ t.name }}
+                </a>
+                - {{ t.artists.0.name }}
+            </h3>  
         </div>
     {% endfor %}
     </ul>

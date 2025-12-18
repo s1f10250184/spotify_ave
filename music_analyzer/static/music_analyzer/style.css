@@ -1,18 +1,153 @@
 
-.container {
-    width: 90px;
-    max-width:800px;
-    margin: 0 auto;
+/* ==================================== */
+/* 1. 全体のリセットと基本設定 */
+/* ==================================== */
+body {
+    /* フォント設定 (例: システムフォント) */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    /* 背景色 (控えめなグレー) */
+    background-color: #f0f3f2;
+    /* ページの高さ全体を占めるように設定 */
+    min-height: 100vh;
+    /* 要素を中央に配置するためのFlexbox設定 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
-/* 画面幅が 600px 以下（スマホ）のときだけ適用 */
-@media (max-width: 600px) {
-    .title {
-        font-size: 20px;  /* スマホでは文字を少し小さく */
-    }
-
-    .button {
-        padding: 12px 20px;
-        width: 100%;      /* スマホでは横いっぱいに広げる */
-    }
+/* ==================================== */
+/* 2. メインコンテナ (フォームのカード) */
+/* ==================================== */
+.music_nums {
+    /* 最大幅を設定 */
+    max-width: 400px;
+    /* 背景色 (白) */
+    background-color: #0c0c0c;
+    /* パディング */
+    padding: 30px;
+    /* 角丸 */
+    border-radius: 12px;
+    /* 軽い影で浮かび上がらせる */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    /* フォーム内の要素を区切る */
+    width: 100%;
 }
+
+/* ==================================== */
+/* 3. 見出し */
+/* ==================================== */
+.music_nums h3 {
+    text-align: center;
+    color: #1DB954; /* Spotifyのブランドカラーを意識 */
+    margin-bottom: 25px;
+    font-size: 1.5rem;
+    border-bottom: 2px solid #eeeeee;
+    padding-bottom: 10px;
+}
+
+/* ==================================== */
+/* 4. 入力フィールドとラベル */
+/* ==================================== */
+.music-num-group, .time-range-group {
+    margin-bottom: 20px;
+}
+
+.music-num-group label, .time-range-group legend {
+    display: block; /* ブロック要素にして全体幅を使う */
+    font-weight: bold;
+    color: #eee7e7;
+    margin-bottom: 8px;
+}
+
+/* 数字入力フィールド */
+input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #cccccc;
+    border-radius: 6px;
+    box-sizing: border-box; /* パディングを含めて幅を計算 */
+    transition: border-color 0.3s;
+}
+
+input[type="number"]:focus {
+    border-color: #1DB954;
+    outline: none; /* デフォルトのフォーカス枠を消す */
+}
+
+/* ==================================== */
+/* 5. 期間選択 (ラジオボタン) */
+/* ==================================== */
+.time-range-group {
+    padding: 15px;
+    border: 1px solid #dddddd;
+    border-radius: 8px;
+    color:#faf8f8
+}
+
+/* fieldsetのデフォルトの境界線をリセット */
+.time-range-group fieldset {
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* legendの調整 */
+.time-range-group legend {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+
+.time-range-group div {
+    /* ラジオボタンとラベルを縦に並べるためのマージン */
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+}
+
+.time-range-group label {
+    font-weight: normal;
+    margin-bottom: 0;
+    margin-left: 8px; /* ラジオボタンとの間隔 */
+    cursor: pointer;
+}
+
+input[type="radio"] {
+    /* ラジオボタンのサイズ調整 */
+    transform: scale(1.1);
+    accent-color: #1DB954; /* 選択された色を設定 */
+}
+
+/* ==================================== */
+/* 6. ボタン */
+/* ==================================== */
+button[type="submit"] {
+    /* ボタンをブロック要素にしてフォーム幅全体を使う */
+    width: 100%;
+    /* Spotifyカラーの緑色 */
+    background-color: #1DB954;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: bold;
+    /* ホバー時のトランジション */
+    transition: background-color 0.3s, transform 0.1s;
+    margin-top: 20px;
+}
+
+button[type="submit"]:hover {
+    /* ホバー時に少し暗くする */
+    background-color: #1aa34a;
+}
+
+button[type="submit"]:active {
+    /* クリック時に少し沈むような効果 */
+    transform: scale(0.99);
+}
+
+

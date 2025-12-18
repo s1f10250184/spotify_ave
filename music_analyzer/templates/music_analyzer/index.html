@@ -8,11 +8,34 @@
     </head>
     <body>
         <div class="music_nums">
+            <h3>YOUR MUSIC DATA</h3>
             <form action ="{% url 'spotify_login' %}" method="get">
-                       <label for="music_num">曲数を選択</label>
-                        <input type="number" id="music_num" name="music_num" min="1" max="50" value="20">
+                
+                <div class="music-num-group">
+                    <label for="music_num">曲数を選択</label>
+                    <input type="number" id="music_num" name="music_num" min="1" max="50" value="20">
+                </div>
 
-                        <button type="submit">Spotifyでログイン</button>
+                <fieldset class="time-range-group">
+                    <legend>期間を選択</legend>
+                    
+                    <div>
+                        <input type="radio" id="short_term" name="time_range" value="short_term" checked>
+                        <label for="short_term">1か月</label>
+                    </div>
+
+                    <div>
+                        <input type="radio" id="medium_term" name="time_range" value="medium_term">
+                        <label for="medium_term">6か月</label>
+                    </div>
+                
+                    <div>
+                        <input type="radio" id="long_term" name="time_range" value="long_term">
+                        <label for="long_term">1年</label>
+                    </div>
+                </fieldset>
+
+                <button type="submit">Spotifyでログイン</button>
             </form>
         </div>
     </body>

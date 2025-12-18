@@ -22,56 +22,27 @@ def spotify_callback(request):
     sp = spotipy.Spotify(auth=access_token)
 
     limit = int(request.session.get("limit", 20))
-    top_tracks = sp.current_user_top_tracks(limit=limit)
-    items = top_tracks["items"]
-    print(items[0])
     profile = sp.current_user()
 
-#これ以降の部分は使えなくなったらしいけどどうにかして使いたい    
-#    track_ids = [track["id"] for track in items]
-#   all_features = []
-#    print("TRACK IDS:", track_ids)
-#    print("CHUNKS:")
-#    for i in range(0, len(track_ids), 1):
-#        chunk = track_ids[i : i+1]
-#        feats = sp.audio_features(chunk)
-#        all_features.extend(feats)
-    
-#    tracks = []
-#    for track, f in zip(items, all_features):
-#        if f is None:
-#            continue
+    term = request.session.get("time_range", "short_term")
+    top_tracks = sp.current_user_top_tracks(limit=limit, time_range=term)
+    items = top_tracks["items"]
+    for t in items:
+        track_name = t["name"]
+        artist_name = t["artists"][0]["name"]
+        print(f"{track_name} {artist_name}")
 
-#    tracks.append({
-#            "name" : track["name"],
-#            "artist":track["artists"][0]["name"],
-#            "image":track["album"]["images"][0]["url"],
-#            "energy":f["energy"],
-#            "tempo":f["tempo"],
-#            "valence":f["valence"],
-#            "key":f["key"],
-#            "loudness":f["loudness"],
-#        })
-#    recent = sp.current_user_recently_played(limit=10)
-#    items = recent["items"]
-#    track_ids = [item["track"]["id"] for item in items]
-#    features = sp.audio_features(track_ids)
-
-#同じくここも使えない？
-#    result = []
-#    for track, feat in zip(items, features):
-#        result.append({
-#            "name":track["name"],
-#            "artist":track["artists"][0]["name"],
-#            "tempo":feat["tempo"],
-#            "energy":feat["energy"],
-#            "valence":feat["valence"],
-#            "image":track["album"]["images"][0]["url"],
-#        })
+    if term == "short_term":
+        term_label = "1か月"
+    elif term == "medium_term":
+        term_label = "6か月"
+    else:
+        term_label = "1年"
 
     return render(request, "music_analyzer/result.html", {
         "tracks": items,
-        "limit": limit
+        "limit": limit,
+        "term_label":term_label,
     })
 
 
@@ -85,12 +56,17 @@ sp_oauth = SpotifyOAuth(
 
 def spotify_login(request):
     limit = request.GET.get("music_num")
+    term = request.GET.get("time_range")
     if not limit:
         limit = 20
     else:
         limit = int(limit)
+    
+    if not term:
+        term = "short_term"
 
     request.session["limit"] = limit
+    request.session["time_range"] = term
     auth_url = sp_oauth.get_authorize_url()
     return redirect(auth_url)
 
