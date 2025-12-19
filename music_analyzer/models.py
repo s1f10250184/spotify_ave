@@ -4,9 +4,20 @@ from django.utils import timezone
 # Create your models here.
 class SpotifyUser(models.Model):
     spotify_user_id = models.CharField(max_length=64, unique=True)
-    display_name = models.CharField(max_length=255, blank=True, default="")
+    access_token = models.CharField(max_length=255, blank=True, default="")
+    refresh_token = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
 
-def __str__(self):
-    return self.display_name or self.spotify_user_id
+    def __str__(self):
+        return self.spotify_user_id
+    
+class TopTracksSnapshot(models.Model):
+    user = models.ForeignKey("SpotifyUser", on_delete=models.CASCADE)
+    term = models.CharField(max_length=16)
+    limit = models.IntegerField(default=20)
+    fetched_at = models.DateTimeField(default=timezone.now)
+    data = models.JSONField(default=dict)
+
+class Meta:
+    ordering = ["-fetched_at"]
 

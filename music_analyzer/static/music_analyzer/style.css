@@ -150,6 +150,13 @@ button[type="submit"]:active {
     transform: scale(0.99);
 }
 
+/* スマホ */
+@media (max-width: 600px) {
+  .container { padding: 12px; }
+}
 
-
+/* PC */
+@media (min-width: 601px) {
+  .container { padding: 24px; }
+}
 

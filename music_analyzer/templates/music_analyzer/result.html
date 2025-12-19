@@ -6,10 +6,10 @@
         <title>結果ページ</title>
         <link rel="stylesheet" href = "{% static 'music_analyzer/style.css' %}"></link>
     </head>
-    <body>
+    <body style="background-color: #000000;">
 
     <div class="bigmum">   
-        <div class="result_h1">
+        <div class="result_h1" style="color: aliceblue;">
             <h1>過去{{ term_label }}のtop{{ limit }}曲</h1>
         </div>
 
@@ -18,10 +18,12 @@
             {% for t in tracks %}
                 <div>
                     <h3>
-                        <a href="{{ t.external_urls.spotify }}" target="_self" rel="noopener noreferrer">
+                        <a href="{{ t.external_urls.spotify }}" target="_self" rel="noopener noreferrer" style="color: chartreuse;">
                             {{ t.name }}
                         </a>
+                        <p style="color: aliceblue;">
                         - {{ t.artists.0.name }}
+                        </p>
                     </h3>  
                 </div>
             {% endfor %}
