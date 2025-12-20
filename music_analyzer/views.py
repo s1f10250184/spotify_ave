@@ -93,4 +93,57 @@ def _spotify_client(user: SpotifyUser) -> spotipy.Spotify:
             return spotipy.Spotify(auth=user.access_token)
         raise
 
+@require_POST
+def refresh_top(request):
+    user = _current_user_row(request)
+    if not user:
+        return redirect("spotify_login")
+    
+    sp = _spotify_client(user)
 
+    term = request.session.get("time_range", "short_term")
+    limit = int(request.session.get("limit", 20))
+
+    top_tracks = sp.current_user_top_tracks(limit=limit, time_range=term)
+
+    tracks = []
+    for t in top_tracks["items"]:
+        tracks.append({
+            "name": t["name"],
+            "article": t["article"],
+            "album": {"images": t["album"]["images"]},
+            "external_urls": t["external_urls"]
+        })
+
+    TopTracksSnapshot.objects.create(
+        user=user,
+        term=term,
+        limit=limit,
+        dat={"tracks": tracks},
+    )
+
+    return redirect("result")
+
+def result(request):
+    user = _current_user_row(request)
+    if not user:
+        return redirect("spotify_login")
+    
+    term = request.session.get("time_range", "short_term")
+    limit = int(request.session.get("limit", 20))
+
+    snap = (TopTracksSnapshot.objects
+            .filter(user=user, term=term, limit=limit)
+            .order_by("-fetched_at")
+            .first())
+    
+    tracks = snap.data.get("tracks", []) if snap else []
+
+    term_label = "1か月" if term == "short=term" else "6か月" if term == "medium_term" else "1年"
+
+    return render(request, "music_analyzer/result.html", {
+        "tracks": tracks,
+        "limit" : limit,
+        "term_label": term_label,
+        "need_refresh": (snap is None),
+    })
