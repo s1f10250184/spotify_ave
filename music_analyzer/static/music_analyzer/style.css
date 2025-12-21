@@ -1,39 +1,39 @@
 
 /* ==================================== */
-/* 1. 全体のリセットと基本設定 */
+/* 1. 全体のリセットと全画面設定 */
 /* ==================================== */
 body {
-    /* フォント設定 (例: システムフォント) */
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    /* 背景色 (控えめなグレー) */
-    background-color: #f0f3f2;
-    /* ページの高さ全体を占めるように設定 */
-    min-height: 100vh;
-    /* 要素を中央に配置するためのFlexbox設定 */
+    /* 背景を画像内のカードと同じ深い黒に変更 */
+    background-color: #0c0c0c; 
+    margin: 0;
+    padding: 0;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
-    margin: 0;
-    padding: 20px;
-    box-sizing: border-box;
+    align-items: center;
+    min-height: 100vh;
+    color: white;
 }
 
 /* ==================================== */
-/* 2. メインコンテナ (フォームのカード) */
+/* 2. メインコンテナ (全画面化) */
 /* ==================================== */
 .music_nums {
-    /* 最大幅を設定 */
-    max-width: 400px;
-    /* 背景色 (白) */
-    background-color: #0c0c0c;
-    /* パディング */
-    padding: 30px;
-    /* 角丸 */
-    border-radius: 12px;
-    /* 軽い影で浮かび上がらせる */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    /* フォーム内の要素を区切る */
+    /* 画面幅いっぱい、高さいっぱいに広げる */
     width: 100%;
+    min-height: 100vh;
+    box-sizing: border-box;
+    
+    /* コンテンツを中央に配置 */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+    /* PCで見ても間延びしすぎないよう、内側に余白を持たせる */
+    padding: 40px;
+    max-width: 600px; /* 必要に応じてここを100%にすれば完全に端まで広がります */
+    margin: 0 auto;
 }
 
 /* ==================================== */
@@ -41,122 +41,194 @@ body {
 /* ==================================== */
 .music_nums h3 {
     text-align: center;
-    color: #1DB954; /* Spotifyのブランドカラーを意識 */
-    margin-bottom: 25px;
-    font-size: 1.5rem;
-    border-bottom: 2px solid #eeeeee;
-    padding-bottom: 10px;
+    color: #1DB954; /* Spotifyグリーン */
+    font-size: 2.2rem;
+    margin-top: 0;
+    margin-bottom: 40px;
+    width: 100%;
+    border-bottom: 2px solid #ffffff;
+    padding-bottom: 20px;
 }
 
 /* ==================================== */
-/* 4. 入力フィールドとラベル */
+/* 4. 入力グループ */
 /* ==================================== */
 .music-num-group, .time-range-group {
-    margin-bottom: 20px;
+    width: 100%;
+    margin-bottom: 30px;
 }
 
 .music-num-group label, .time-range-group legend {
-    display: block; /* ブロック要素にして全体幅を使う */
+    display: block;
+    font-size: 1.2rem;
     font-weight: bold;
-    color: #eee7e7;
-    margin-bottom: 8px;
+    color: #ffffff;
+    margin-bottom: 15px;
 }
 
 /* 数字入力フィールド */
 input[type="number"] {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #cccccc;
-    border-radius: 6px;
-    box-sizing: border-box; /* パディングを含めて幅を計算 */
-    transition: border-color 0.3s;
-}
-
-input[type="number"]:focus {
-    border-color: #1DB954;
-    outline: none; /* デフォルトのフォーカス枠を消す */
+    padding: 15px 20px;
+    font-size: 1.2rem;
+    background-color: #ffffff; /* 画像通り白背景 */
+    border: none;
+    border-radius: 8px;
+    box-sizing: border-box;
+    color: #000;
 }
 
 /* ==================================== */
 /* 5. 期間選択 (ラジオボタン) */
 /* ==================================== */
 .time-range-group {
-    padding: 15px;
-    border: 1px solid #dddddd;
-    border-radius: 8px;
-    color:#faf8f8
-}
-
-/* fieldsetのデフォルトの境界線をリセット */
-.time-range-group fieldset {
-    border: none;
-    padding: 0;
-    margin: 0;
-}
-
-/* legendの調整 */
-.time-range-group legend {
-    font-size: 1.1rem;
-    margin-bottom: 10px;
+    border: 1px solid #ffffff; /* 枠線を少し明るくして視認性を確保 */
+    padding: 25px;
+    border-radius: 12px;
 }
 
 .time-range-group div {
-    /* ラジオボタンとラベルを縦に並べるためのマージン */
-    margin-bottom: 8px;
+    margin-bottom: 12px;
     display: flex;
     align-items: center;
 }
 
 .time-range-group label {
-    font-weight: normal;
-    margin-bottom: 0;
-    margin-left: 8px; /* ラジオボタンとの間隔 */
+    font-size: 1.1rem;
+    margin-left: 12px;
     cursor: pointer;
 }
 
 input[type="radio"] {
-    /* ラジオボタンのサイズ調整 */
-    transform: scale(1.1);
-    accent-color: #1DB954; /* 選択された色を設定 */
+    transform: scale(1.3); /* ラジオボタンを少し大きく */
+    accent-color: #1DB954;
 }
 
 /* ==================================== */
-/* 6. ボタン */
+/* 6. ボタン (画面下部にインパクトを) */
 /* ==================================== */
 button[type="submit"] {
-    /* ボタンをブロック要素にしてフォーム幅全体を使う */
     width: 100%;
-    /* Spotifyカラーの緑色 */
     background-color: #1DB954;
     color: white;
-    padding: 12px 20px;
+    padding: 20px;
     border: none;
-    border-radius: 8px;
+    border-radius: 12px;
     cursor: pointer;
-    font-size: 1.1rem;
+    font-size: 1.3rem;
     font-weight: bold;
-    /* ホバー時のトランジション */
-    transition: background-color 0.3s, transform 0.1s;
+    transition: background-color 0.3s, transform 0.2s;
     margin-top: 20px;
 }
 
 button[type="submit"]:hover {
-    /* ホバー時に少し暗くする */
-    background-color: #1aa34a;
+    background-color: #1ed760;
+    transform: translateY(-2px);
 }
 
 button[type="submit"]:active {
-    /* クリック時に少し沈むような効果 */
-    transform: scale(0.99);
+    transform: translateY(0);
 }
 
-/* スマホ */
-@media (max-width: 600px) {
-  .container { padding: 12px; }
+/* メインコンテナを横並びに（フレックスボックス） */
+.bigmum {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    gap: 40px;
+    align-items: flex-start;
 }
 
-/* PC */
-@media (min-width: 601px) {
-  .container { padding: 24px; }
+/* 左側：曲リストエリア */
+.music_rank {
+    flex: 2; /* 広いスペースを割り当てる */
 }
 
+.result_h1 h1 {
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+    background: linear-gradient(90deg, #1db954, #1aa34a);
+    background-clip:text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 800;
+}
+
+/* リストのスタイル調整 */
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+.track-item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border-radius: 8px;
+    transition: background 0.3s ease, transform 0.2s ease;
+    margin-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.track-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(10px);
+}
+
+.track-item h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.track-item a {
+    text-decoration: none;
+    color: #1db954; /* Spotify Green */
+    transition: color 0.3s;
+}
+
+.track-item a:hover {
+    color: #1ed760;
+    text-decoration: underline;
+}
+
+/* 右側：ジャケット画像エリア */
+.music_jacket {
+    flex: 1;
+    position: sticky; /* スクロールしてもついてくるように */
+    top: 40px;
+    display: flex;
+    justify-content: center;
+}
+
+#coverBig {
+    width: 100%;
+    max-width: 400px;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    transition: transform 0.5s ease;
+}
+
+#coverBig:hover {
+    transform: scale(1.03);
+}
+
+/* レスポンシブ対応（スマホで見るときは縦並びに） */
+@media (max-width: 768px) {
+    .bigmum {
+        flex-direction: column-reverse; /* スマホでは画像を上に、リストを下に */
+        padding: 20px;
+    }
+    
+    .music_jacket {
+        position: static;
+        margin-bottom: 20px;
+    }
+    
+    .result_h1 h1 {
+        font-size: 1.8rem;
+    }
+}
