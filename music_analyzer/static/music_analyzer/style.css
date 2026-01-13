@@ -1,10 +1,18 @@
+/*overflow:hiddenで画面全体を止める*/
+html, body {
+  height: 100%;
+}
 
-/* ==================================== */
-/* 1. 全体のリセットと全画面設定 */
-/* ==================================== */
+body.page-index {
+    overflow:auto;
+}
+
+
+
+
+
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    /* 背景を画像内のカードと同じ深い黒に変更 */
     background-color: #0c0c0c; 
     margin: 0;
     padding: 0;
@@ -15,33 +23,22 @@ body {
     color: white;
 }
 
-/* ==================================== */
-/* 2. メインコンテナ (全画面化) */
-/* ==================================== */
 .music_nums {
-    /* 画面幅いっぱい、高さいっぱいに広げる */
     width: 100%;
     min-height: 100vh;
     box-sizing: border-box;
     
-    /* コンテンツを中央に配置 */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    
-    /* PCで見ても間延びしすぎないよう、内側に余白を持たせる */
     padding: 40px;
-    max-width: 600px; /* 必要に応じてここを100%にすれば完全に端まで広がります */
+    max-width: 600px; 
     margin: 0 auto;
 }
 
-/* ==================================== */
-/* 3. 見出し */
-/* ==================================== */
 .music_nums h3 {
-    text-align: center;
-    color: #1DB954; /* Spotifyグリーン */
+     text-align: center;
     font-size: 2.2rem;
     margin-top: 0;
     margin-bottom: 40px;
@@ -50,9 +47,6 @@ body {
     padding-bottom: 20px;
 }
 
-/* ==================================== */
-/* 4. 入力グループ */
-/* ==================================== */
 .music-num-group, .time-range-group {
     width: 100%;
     margin-bottom: 30px;
@@ -66,23 +60,19 @@ body {
     margin-bottom: 15px;
 }
 
-/* 数字入力フィールド */
 input[type="number"] {
     width: 100%;
     padding: 15px 20px;
     font-size: 1.2rem;
-    background-color: #ffffff; /* 画像通り白背景 */
+    background-color: #ffffff; 
     border: none;
     border-radius: 8px;
     box-sizing: border-box;
     color: #000;
 }
 
-/* ==================================== */
-/* 5. 期間選択 (ラジオボタン) */
-/* ==================================== */
 .time-range-group {
-    border: 1px solid #ffffff; /* 枠線を少し明るくして視認性を確保 */
+    border: 1px solid #ffffff; 
     padding: 25px;
     border-radius: 12px;
 }
@@ -100,13 +90,10 @@ input[type="number"] {
 }
 
 input[type="radio"] {
-    transform: scale(1.3); /* ラジオボタンを少し大きく */
+    transform: scale(1.3); 
     accent-color: #1DB954;
 }
 
-/* ==================================== */
-/* 6. ボタン (画面下部にインパクトを) */
-/* ==================================== */
 button[type="submit"] {
     width: 100%;
     background-color: #1DB954;
@@ -130,7 +117,6 @@ button[type="submit"]:active {
     transform: translateY(0);
 }
 
-/* メインコンテナを横並びに（フレックスボックス） */
 .bigmum {
     display: flex;
     max-width: 1200px;
@@ -138,24 +124,38 @@ button[type="submit"]:active {
     padding: 40px 20px;
     gap: 40px;
     align-items: flex-start;
+    height:100vh;
+    box-sizing: border-box;
 }
 
-/* 左側：曲リストエリア */
 .music_rank {
-    flex: 2; /* 広いスペースを割り当てる */
+    flex:1;
+    max-height: 60vh;     
+    min-height:0;
+    overflow-y: auto;      
+    -webkit-overflow-scrolling: touch; 
+    min-width:350px;
+    margin:8px;
+}
+
+.right {
+    flex:1;
+    display:flex;
+    flex-direction: column;
+    align-items:center;
+    gap:16px;
 }
 
 .result_h1 h1 {
     font-size: 2.5rem;
     margin-bottom: 30px;
-    background: linear-gradient(90deg, #1db954, #1aa34a);
-    background-clip:text;
+    background: linear-gradient(90deg, #1db954,#1aa34a);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     font-weight: 800;
 }
 
-/* リストのスタイル調整 */
 ul {
     list-style: none;
     padding: 0;
@@ -184,7 +184,7 @@ ul {
 
 .track-item a {
     text-decoration: none;
-    color: #1db954; /* Spotify Green */
+    color: #1db954; 
     transition: color 0.3s;
 }
 
@@ -193,13 +193,12 @@ ul {
     text-decoration: underline;
 }
 
-/* 右側：ジャケット画像エリア */
 .music_jacket {
     flex: 1;
-    position: sticky; /* スクロールしてもついてくるように */
-    top: 40px;
     display: flex;
     justify-content: center;
+    height: max-content;
+    width: max-content;
 }
 
 #coverBig {
@@ -216,11 +215,10 @@ ul {
     transform: scale(1.03);
 }
 
-/* レスポンシブ対応（スマホで見るときは縦並びに） */
 @media (max-width: 768px) {
     .bigmum {
-        flex-direction: column-reverse; /* スマホでは画像を上に、リストを下に */
-        padding: 20px;
+        height:auto;
+        min-height:100vh;
     }
     
     .music_jacket {
@@ -230,5 +228,37 @@ ul {
     
     .result_h1 h1 {
         font-size: 1.8rem;
+    }
+}
+
+.music_nums h3, .result_h1 h1 {
+    background: linear-gradient(
+        90deg, 
+        #1DB954, 
+        #1ED760, 
+        #16E2FF, 
+        #1DB954
+    );
+    background-size: 200% auto; 
+    
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    
+    font-weight: 900;
+    font-size: 2.8rem;
+    letter-spacing: -0.02em; 
+    
+    filter: drop-shadow(0 0 10px rgba(29, 185, 84, 0.3));
+    
+    animation: shine 4s linear infinite;
+    
+    border-bottom: none;
+    margin-bottom: 40px;
+}
+
+@keyframes shine {
+    to {
+        background-position: 200% center;
     }
 }

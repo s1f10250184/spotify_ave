@@ -1,71 +1,158 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
+import os
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
-import os
+from spotipy.exceptions import SpotifyException
+
+from django.shortcuts import render, redirect
+from django.views.decorators.http import require_POST
+
+from .models import SpotifyUser, TopTrackSnapshot
 
 
-# Create your views here.
+# OAuth設定
+sp_oauth = SpotifyOAuth(
+    client_id=os.environ.get("SPOTIFY_CLIENT_ID"),
+    client_secret=os.environ.get("SPOTIFY_CLIENT_SECRET"),
+    redirect_uri="http://127.0.0.1:8000/callback/",
+    scope="user-top-read user-read-recently-played",
+)
+
+
 def index(request):
-    return render(request, 'music_analyzer/index.html')
+    return render(request, "music_analyzer/index.html")
 
-def spotify_login_page(request):
-    limit = request.GET.get("limit", 20) 
-    request.session["limit"] = limit       
-    return render(request, "music_analyzer/index.html", {"limit": limit})
+
+def spotify_login(request):
+    limit = request.GET.get("music_num")
+    term = request.GET.get("time_range")
+
+    if limit:
+        request.session["limit"] = int(limit)
+    else:
+        request.session.setdefault("limit", 20)
+
+    if term:
+        request.session["time_range"] = term
+    else:
+        request.session.setdefault("time_range", "short_term")
+    if request.session.get("spotify_user_id"):
+        return redirect("result")
+    return redirect(sp_oauth.get_authorize_url())
+
+
+
+def _term_label(term: str) -> str:
+    return {"short_term": "1か月", "medium_term": "6か月", "long_term": "1年"}.get(term, "1年")
+
+
+def _current_user_row(request):
+    spotify_user_id = request.session.get("spotify_user_id")
+    if not spotify_user_id:
+        return None
+    return SpotifyUser.objects.filter(spotify_user_id=spotify_user_id).first()
+
+
+def _spotify_client(user: SpotifyUser) -> spotipy.Spotify:
+    sp = spotipy.Spotify(auth=user.access_token)
+    try:
+        sp.current_user()
+        return sp
+    except SpotifyException as e:
+        if getattr(e, "http_status", None) == 401 and user.refresh_token:
+            new = sp_oauth.refresh_access_token(user.refresh_token)
+            user.access_token = new["access_token"]
+            user.save(update_fields=["access_token"])
+            return spotipy.Spotify(auth=user.access_token)
+        raise
+
+
+def _save_snapshot(user: SpotifyUser, items: list, term: str, limit: int):
+    tracks = []
+    for t in items:
+        tracks.append({
+            "name": t["name"],
+            "artists": t["artists"],
+            "album": {"images": t["album"]["images"]},
+            "external_urls": t["external_urls"],
+        })
+
+    TopTrackSnapshot.objects.create(
+        user=user,
+        term=term,
+        limit=limit,
+        data={"tracks": tracks},
+    )
 
 
 def spotify_callback(request):
     code = request.GET.get("code")
     token_info = sp_oauth.get_access_token(code)
-    access_token = token_info["access_token"]
-    sp = spotipy.Spotify(auth=access_token)
 
+    access_token = token_info["access_token"]
+    refresh_token = token_info.get("refresh_token")
+
+    sp = spotipy.Spotify(auth=access_token)
+    spotify_user_id = sp.current_user()["id"]
+
+    user, created = SpotifyUser.objects.get_or_create(
+        spotify_user_id=spotify_user_id,
+        defaults={"access_token": access_token, "refresh_token": refresh_token or ""},
+    )
+    if not created:
+        user.access_token = access_token
+        if refresh_token:
+            user.refresh_token = refresh_token
+        user.save()
+
+    request.session["spotify_user_id"] = spotify_user_id
+
+    # ここは session から読む（キーを統一）
+    term = request.session.get("time_range", "short_term")
     limit = int(request.session.get("limit", 20))
-    profile = sp.current_user()
+
+    has_snap = TopTrackSnapshot.objects.filter(user=user, term=term, limit=limit).exists()
+    if not has_snap:
+        top_tracks = sp.current_user_top_tracks(limit=limit, time_range=term)
+        _save_snapshot(user, top_tracks["items"], term, limit)
+
+    return redirect("result")
+
+
+def result(request):
+    user = _current_user_row(request)
+    if not user:
+        return redirect("spotify_login")
 
     term = request.session.get("time_range", "short_term")
-    top_tracks = sp.current_user_top_tracks(limit=limit, time_range=term)
-    items = top_tracks["items"]
-    for t in items:
-        track_name = t["name"]
-        artist_name = t["artists"][0]["name"]
-        print(f"{track_name} {artist_name}")
+    limit = int(request.session.get("limit", 20))
 
-    if term == "short_term":
-        term_label = "1か月"
-    elif term == "medium_term":
-        term_label = "6か月"
-    else:
-        term_label = "1年"
+    snap = (TopTrackSnapshot.objects
+            .filter(user=user, term=term, limit=limit)
+            .order_by("-fetched_at")
+            .first())
+
+    tracks = snap.data.get("tracks", []) if snap else []
 
     return render(request, "music_analyzer/result.html", {
-        "tracks": items,
+        "tracks": tracks,
         "limit": limit,
-        "term_label":term_label,
+        "term_label": _term_label(term),
+        "need_refresh": (snap is None),
     })
 
 
+@require_POST
+def refresh_top(request):
+    user = _current_user_row(request)
+    if not user:
+        return redirect("spotify_login")
 
-sp_oauth = SpotifyOAuth(
-    client_id=os.environ.get('SPOTIFY_CLIENT_ID'),
-    client_secret=os.environ.get('SPOTIFY_CLIENT_SECRET'),
-    redirect_uri="http://127.0.0.1:8000/callback/",
-    scope="user-top-read user-read-recently-played"
-)
+    sp = _spotify_client(user)
 
-def spotify_login(request):
-    limit = request.GET.get("music_num")
-    term = request.GET.get("time_range")
-    if not limit:
-        limit = 20
-    else:
-        limit = int(limit)
-    
-    if not term:
-        term = "short_term"
+    term = request.session.get("time_range", "short_term")
+    limit = int(request.session.get("limit", 20))
 
-    request.session["limit"] = limit
-    request.session["time_range"] = term
-    auth_url = sp_oauth.get_authorize_url()
-    return redirect(auth_url)
+    top_tracks = sp.current_user_top_tracks(limit=limit, time_range=term)
+    _save_snapshot(user, top_tracks["items"], term, limit)
+
+    return redirect("result")

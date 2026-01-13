@@ -4,39 +4,100 @@
     <head>
         <meta charset="UTF-8" name="viewport" content="'width=device-width, initial-scale=1.0">
         <title>結果ページ</title>
-        <link rel="stylesheet" href = "{% static 'music_analyzer/style.css' %}"></link>
+        <link rel="stylesheet" href = "{% static 'music_analyzer/style.css' %}">
     </head>
-    <body style="background-color: #000000;">
+<body class="page-result" style="background-color:black ;color:white;">
 
-    <div class="bigmum">   
-        <div class="result_h1" style="color: aliceblue;">
-            <h1>過去{{ term_label }}のtop{{ limit }}曲</h1>
-        </div>
-
-        <div class="music_rank" style="margin: 10px;">
-            <ul>
-            {% for t in tracks %}
-                <div>
-                    <h3>
-                        <a href="{{ t.external_urls.spotify }}" target="_self" rel="noopener noreferrer" style="color: chartreuse;">
-                            {{ t.name }}
-                        </a>
-                        <p style="color: aliceblue;">
-                        - {{ t.artists.0.name }}
-                        </p>
-                    </h3>  
-                </div>
-            {% endfor %}
-            </ul>
-        </div>
-
-        <div music_jacket>
-            <div class="right">
-                <img id="coverBig" src="{{ tracks.0.album.images.0.url }}" alt="{{ tracks.0.name }}">
+    <div class="bigmum">   
+        
+        <div class="left-content">
+            <div class="result_h1">
+                <h1>過去{{ term_label }}のtop{{ limit }}曲</h1>
             </div>
+
+            <div class="music_rank" style="margin: 10px;">
+                <ul>
+                {% for t in tracks %}
+                    <div>
+                        <h3>
+                            <a href="{{ t.external_urls.spotify }}" target="_self" rel="noopener noreferrer" style="color:#1aa34a ;">
+                                {{ t.name }}
+                            </a>
+                            - <a href="{{ t.artists.0.external_urls.spotify }}" target="_self" rel="noopener noreferrer" style="color:white ;">
+                                {{ t.artists.0.name }}
+                            </a>
+                        </h3>  
+                    </div>
+                {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class = "right">
+            <div class="music_jacket" height="100" width="100">
+            {% if tracks %}
+                <img id = "coverBig" src = "{{ tracks.0.album.images.0.url }}" alt="{{ tracks.0.name }}">
+                <p class="jacket_artist" id = "coverMeta">
+                    {{ tracks.0.name}} -{{ tracks.0.artists.0.name }}
+                </p>
+
+                <p class="controls">
+                    <button type="button" id = "prevBtn">◀</button>
+                    <button type="button" id = "nextBtn">▶</button>
+                </p>
+            {% else %}
+                <p>まだデータがありません。更新してください。</p>
+            {% endif %}
+            </div>
+            <div>
+                <form method="post" action = "{% url 'refresh_top' %}">
+                    {% csrf_token %}
+                    <button type="submit">更新</button>
+                </form>
+            </div>        
         </div>
     </div>
     
+    {% if tracks %}
+        {{tracks|json_script:"tracks-data" }}
+    {% endif %}
+    <script>
+        const dataEl = document.getElementById("tracks-data");
+        if (dataEl) {
+            const tracks = JSON.parse(dataEl.textContent);
+            let idx = 0;
+            // ... (JavaScriptの関数定義とイベントリスナーは省略せずにそのまま保持)
+            const img = document.getElementById("coverBig");
+            const meta = document.getElementById("coverMeta");
 
-    </body>
-</html>
+            function imgUrl(t) {
+                return (t.album && t.album.images && t.album.images[0] && t.album.images[0].url) ? t.album.images[0].url : "";
+            }
+
+            function artistName(t) {
+                return (t.artists && t.artists[0] && t.artists[0].name) ? t.artists[0].name : "";
+            }
+
+            function render(i) {
+                const t = tracks[i];
+                const url = imgUrl(t);
+                if (url) img.src = url;
+                img.alt = t.name || "";
+
+                meta.textContent = `${t.name || ""} - ${artistName(t)}`;
+            }
+
+            document.getElementById("nextBtn").addEventListener("click", () => {
+                idx = (idx + 1) % tracks.length;
+                render(idx);
+            });
+
+            document.getElementById("prevBtn").addEventListener("click", () => {
+                idx = (idx - 1 + tracks.length) % tracks.length;
+                render(idx);
+            });
+
+            render(idx);
+        }
+    </script>    
+
+</body>
