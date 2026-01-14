@@ -1,4 +1,6 @@
 /*overflow:hiddenで画面全体を止める*/
+/*pc上で画面半分にしたときに画面センターで固定される
+ジャケットのボタンが勝手に移動されることが問題*/
 html, body {
   height: 100%;
 }
@@ -34,7 +36,7 @@ body {
 }
 
 .music_nums h3 {
-     text-align: center;
+    text-align: center;
     font-size: 2.2rem;
     margin-top: 0;
     margin-bottom: 40px;
@@ -140,6 +142,7 @@ button[type="submit"]:active {
     flex-direction: column;
     align-items:center;
     gap:16px;
+    position:relative;
 }
 
 .result_h1 h1 {
@@ -259,14 +262,3 @@ ul {
     }
 }
 
-.jacket_artist {
-    position:relative;
-    top:25em;
-    right:24em;
-}
-
-.controls {
-    position:relative;
-    top:27em;
-    right:37em;
-}
