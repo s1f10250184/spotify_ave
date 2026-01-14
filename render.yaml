@@ -1,0 +1,31 @@
+databases:
+  - name: 1-spotify-rank
+    plan: free
+    databaseName: 1-spotify-rank
+    user: 1-spotify-rank
+
+services:
+  - type: web
+    name: 1-spotify-rank
+    env: python
+    plan: free
+    branch: make/restart
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn config.wsgi:application"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: 1-spotify-rank
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DJANGO_SETTINGS_MODULE
+        value: config.production
+      - key: WEB_CONCURRENCY
+        value: 4
+      - key: SPOTIFY_CLIENT_ID
+        sync: false
+      - key: SPOTIFY_CLIENT_SECRET
+        sync: false
+      - key: SPOTIFY_REDIRECT_URL
+        sync: false
