@@ -9,7 +9,7 @@ services:
     name: 1-spotify-rank
     env: python
     plan: free
-    branch: make/restart
+    branch: main
     buildCommand: "./build.sh"
     startCommand: "gunicorn config.wsgi:application"
     envVars:
