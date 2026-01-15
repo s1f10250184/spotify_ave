@@ -4,7 +4,9 @@ from .settings import *
 
 DEBUG = False
 SECRET_KEY = os.environ['SECRET_KEY']
-ALLOWED_HOSTS.append(os.environ['RENDER_EXTERNAL_HOSTNAME'])
+hostname = os.environ('RENDER_EXTERNAL_HOSTNAME')
+if hostname:
+    ALLOWED_HOSTS.append(hostname)
 
 MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
 
