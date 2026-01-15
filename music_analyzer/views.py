@@ -13,7 +13,7 @@ from .models import SpotifyUser, TopTrackSnapshot
 sp_oauth = SpotifyOAuth(
     client_id=os.environ.get("SPOTIFY_CLIENT_ID"),
     client_secret=os.environ.get("SPOTIFY_CLIENT_SECRET"),
-    redirect_url = os.environ.get("SPOTIFY_REDIRECT_URL"),
+    redirect_uri = os.environ.get("SPOTIFY_REDIRECT_URI"),
     scope="user-top-read user-read-recently-played",
 )
 
