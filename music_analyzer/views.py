@@ -88,9 +88,10 @@ def _save_snapshot(user: SpotifyUser, items: list, term: str, limit: int):
 
 
 def spotify_callback(request):
+    sp_oauth = get_sp_oauth()
+    
     code = request.GET.get("code")
     token_info = sp_oauth.get_access_token(code)
-    sp_oauth = get_sp_oauth()
     access_token = token_info["access_token"]
     refresh_token = token_info.get("refresh_token")
 
