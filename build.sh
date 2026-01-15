@@ -4,4 +4,9 @@ set -o errexit
 pip install -r requirements.txt
 
 python manage.py collectstatic --no-input
-python manage.py migrate
+
+if [ -n "$DATABASE_URL" ]; then
+    python manage.py migrate
+else
+    echo "Skipping migrate (no DATABASE_URL)"
+fi
