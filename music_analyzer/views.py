@@ -61,7 +61,7 @@ def _spotify_client(user: SpotifyUser) -> spotipy.Spotify:
         return sp
     except SpotifyException as e:
         if getattr(e, "http_status", None) == 401 and user.refresh_token:
-            sp_oauth = get_sp_oauth
+            sp_oauth = get_sp_oauth()
             new = sp_oauth.refresh_access_token(user.refresh_token)
             user.access_token = new["access_token"]
             user.save(update_fields=["access_token"])
@@ -90,7 +90,7 @@ def _save_snapshot(user: SpotifyUser, items: list, term: str, limit: int):
 def spotify_callback(request):
     code = request.GET.get("code")
     token_info = sp_oauth.get_access_token(code)
-    sp_oauth = get_sp_oauth
+    sp_oauth = get_sp_oauth()
     access_token = token_info["access_token"]
     refresh_token = token_info.get("refresh_token")
 
